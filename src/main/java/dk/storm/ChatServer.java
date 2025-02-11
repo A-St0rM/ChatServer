@@ -8,6 +8,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class ChatServer implements IObservable{
 
@@ -31,7 +32,7 @@ public class ChatServer implements IObservable{
             ServerSocket server = new ServerSocket(port);
             while (true) {
                 Socket client = server.accept();
-                ClientHandler clientHandler = new ClientHandler(client, this);
+                ClientHandler clientHandler = new ClientHandler(client, this, clients);
                 new Thread(clientHandler).start();
                 clients.add(clientHandler);
             }
@@ -52,16 +53,19 @@ public class ChatServer implements IObservable{
         }
     }
 
+
     private static class ClientHandler implements Runnable, IObserver{
         private Socket client;
         private BufferedReader in;
         private PrintWriter out;
         private IObservable server;
         private String name = "User";
+        private List<ClientHandler> clients;
 
-        public ClientHandler(Socket client, IObservable server) throws IOException {
+        public ClientHandler(Socket client, IObservable server, List<ClientHandler> clients) throws IOException {
             this.client = client;
             this.server = server;
+            this.clients = clients;
             in = new BufferedReader(new InputStreamReader(client.getInputStream()));
             out = new PrintWriter(client.getOutputStream(), true);
         }
@@ -78,8 +82,20 @@ public class ChatServer implements IObservable{
                         server.broadcast("A new person joined the chat. Welcome to " + name);
                         this.name = name;
                     }
+                    else if(message.equals("#LEAVE")){
+                        server.broadcast(name + " just left the chat server. Bye bye.....");
+                        client.close();
+                    }
+                    else if(message.startsWith("#PRIVATE")){
+                        String[] msgSplit  = message.split(" ", 3);
+
+                        String name = msgSplit[1];
+                        String privateMessage = msgSplit[2];
+
+                        sendPrivateMessage(name, privateMessage);
+                    }
                     else{
-                        server.broadcast(message);
+                        server.broadcast(name +": " + message);
                     }
                 }
             } catch (IOException e) {
@@ -89,7 +105,36 @@ public class ChatServer implements IObservable{
 
         @Override
         public void notify(String message) {
-            out.println(name + ": " + message);
+            out.println(message);
+        }
+
+        public void sendPrivateMessage(String name, String privateMessage){
+            Random random = new Random();
+            int randomDelay = random.nextInt(5000); // Random delay between 0-5000ms
+
+            ClientHandler targetClient = null;
+            for (ClientHandler ch : clients) {
+                if (ch.name.equals(name)) {
+                    targetClient = ch;
+                    break;
+                }
+            }
+
+            if (targetClient == null) {
+                out.println("User " + name + " not found.");
+                return;
+            }
+
+            // Start a new thread to send the message after randomDelay
+            ClientHandler finalTargetClient = targetClient;
+            new Thread(() -> {
+                try {
+                    Thread.sleep(randomDelay);
+                    finalTargetClient.notify("Private message from " + name + ": " + privateMessage);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }).start();
         }
     }
 }
