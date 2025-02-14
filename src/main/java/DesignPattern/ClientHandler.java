@@ -1,4 +1,5 @@
-package dk.storm;
+package DesignPattern;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -11,11 +12,11 @@ public class ClientHandler implements Runnable, IObserver {
     private Socket client;
     private BufferedReader in;
     private PrintWriter out;
-    private IObservable server;
+    private ChatServer server;
     private String name = "User";
     private List<ClientHandler> clients;
 
-    public ClientHandler(Socket client, IObservable server, List<ClientHandler> clients) throws IOException {
+    public ClientHandler(Socket client, ChatServer server, List<ClientHandler> clients) throws IOException {
         this.client = client;
         this.server = server;
         this.clients = clients;
@@ -28,28 +29,33 @@ public class ClientHandler implements Runnable, IObserver {
         String message;
 
         try {
+
             while ((message = in.readLine()) != null) {
-                //System.out.println(message);
-                if(message.startsWith("#JOIN")){
-                    String name = message.split(" ")[1];
-                    server.broadcast("A new person joined the chat. Welcome to " + name);
-                    this.name = name;
-                }
-                else if(message.equals("#LEAVE")){
-                    server.broadcast(name + " just left the chat server. Bye bye.....");
-                    client.close();
-                }
-                else if(message.startsWith("#PRIVATE")){
-                    String[] msgSplit  = message.split(" ", 3);
 
-                    String name = msgSplit[1];
-                    String privateMessage = msgSplit[2];
+                String command = message.split(" ")[0];
+                String restMessage = message.substring(command.length()+1);
 
-                    sendPrivateMessage(name, privateMessage);
-                }
-                else{
-                    server.broadcast(name +": " + message);
-                }
+                MessageStrategyFactory.getStrategy(command).execute(restMessage, this);
+
+//                if(message.startsWith("#JOIN")){
+//                    String name = message.split(" ")[1];
+//                    server.broadcast("A new person joined the chat. Welcome to " + name);
+//                    this.name = name;
+//                }
+//                else if(message.equals("#LEAVE")){
+//                    server.broadcast(name + " just left the chat server. Bye bye.....");
+//                    client.close();
+//                }
+//                else if(message.startsWith("#PRIVATE")){
+//                    String[] msgSplit  = message.split(" ", 3);
+//
+//                    String name = msgSplit[1];
+//                    String privateMessage = msgSplit[2];
+//
+//                    sendPrivateMessage(name, privateMessage);
+//                }
+
+//
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -88,5 +94,17 @@ public class ClientHandler implements Runnable, IObserver {
                 e.printStackTrace();
             }
         }).start();
+    }
+
+    public ChatServer getServer(){
+        return this.server;
+    }
+
+    public void setName(String name){
+        this.name = name;
+    }
+
+    public String getName(){
+        return this.name;
     }
 }
