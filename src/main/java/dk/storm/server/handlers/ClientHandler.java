@@ -1,8 +1,9 @@
-package dk.storm.Server;
+package dk.storm.server.handlers;
 
 
-import dk.storm.Interfaces.IObserver;
-import dk.storm.Strategies.MessageStrategyFactory;
+import dk.storm.interfaces.IObserver;
+import dk.storm.strategies.MessageStrategyFactory;
+import dk.storm.server.ChatServer;
 
 import java.io.BufferedReader;
 import java.io.IOException;

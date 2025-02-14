@@ -1,6 +1,7 @@
-package dk.storm.Server;
+package dk.storm.server;
 
-import dk.storm.Interfaces.IObservable;
+import dk.storm.interfaces.IObservable;
+import dk.storm.server.handlers.ClientHandler;
 
 import java.io.IOException;
 import java.net.ServerSocket;

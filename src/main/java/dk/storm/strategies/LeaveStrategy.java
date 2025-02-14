@@ -1,7 +1,7 @@
-package dk.storm.Strategies;
+package dk.storm.strategies;
 
-import dk.storm.Interfaces.IMessageStrategy;
-import dk.storm.Server.ClientHandler;
+import dk.storm.interfaces.IMessageStrategy;
+import dk.storm.server.handlers.ClientHandler;
 
 public class LeaveStrategy implements IMessageStrategy {
     @Override

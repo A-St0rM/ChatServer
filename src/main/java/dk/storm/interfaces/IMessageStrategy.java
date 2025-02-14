@@ -1,6 +1,6 @@
-package dk.storm.Interfaces;
+package dk.storm.interfaces;
 
-import dk.storm.Server.ClientHandler;
+import dk.storm.server.handlers.ClientHandler;
 
 public interface IMessageStrategy {
     //Strategy pattern

@@ -1,7 +1,7 @@
-package dk.storm.Strategies;
+package dk.storm.strategies;
 
-import dk.storm.Server.ClientHandler;
-import dk.storm.Interfaces.IMessageStrategy;
+import dk.storm.server.handlers.ClientHandler;
+import dk.storm.interfaces.IMessageStrategy;
 
 public class MessageStrategy implements IMessageStrategy {
 
