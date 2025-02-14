@@ -1,4 +1,4 @@
-package DesignPattern;
+package dk.storm.Interfaces;
 
 public interface IObservable {
 

@@ -1,4 +1,8 @@
-package DesignPattern;
+package dk.storm.Server;
+
+
+import dk.storm.Interfaces.IObserver;
+import dk.storm.Strategies.MessageStrategyFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -96,6 +100,19 @@ public class ClientHandler implements Runnable, IObserver {
         }).start();
     }
 
+    public void closeClient() {
+        try {
+
+            in.close();
+            out.close();
+            client.close();
+            server.removeClient(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     public ChatServer getServer(){
         return this.server;
     }
@@ -106,5 +123,9 @@ public class ClientHandler implements Runnable, IObserver {
 
     public String getName(){
         return this.name;
+    }
+
+    public List<ClientHandler> getClients(){
+        return clients;
     }
 }

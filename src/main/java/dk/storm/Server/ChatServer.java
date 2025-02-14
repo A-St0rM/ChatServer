@@ -1,12 +1,16 @@
-package dk.storm;
+package dk.storm.Server;
+
+import dk.storm.Interfaces.IObservable;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-public class ChatServer implements IObservable{
+public class ChatServer implements IObservable {
 
     //Singleton design pattern
     private ChatServer(){};
@@ -26,15 +30,23 @@ public class ChatServer implements IObservable{
     public void startServer(int port) {
         try {
             ServerSocket server = new ServerSocket(port);
+            //Thread pool
+            ExecutorService executorService = Executors.newCachedThreadPool();
             while (true) {
                 Socket client = server.accept();
                 ClientHandler clientHandler = new ClientHandler(client, this, clients);
-                new Thread(clientHandler).start();
+                //new Thread(clientHandler).start();
+                executorService.submit(clientHandler);
+
                 clients.add(clientHandler);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public List<ClientHandler> getClients(){
+        return clients;
     }
 
     public static void main(String[] args) {
@@ -44,8 +56,13 @@ public class ChatServer implements IObservable{
 
     @Override
     public void broadcast(String message) {
-        for(ClientHandler ch : clients){
+        System.out.println("[DEBUG] Broadcasting: " + message);
+        for (ClientHandler ch : clients) {
             ch.notify(message);
         }
+    }
+
+    public void removeClient(ClientHandler client){
+        clients.remove(client);
     }
 }

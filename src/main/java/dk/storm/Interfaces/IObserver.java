@@ -1,4 +1,4 @@
-package dk.storm;
+package dk.storm.Interfaces;
 
 public interface IObserver {
 
