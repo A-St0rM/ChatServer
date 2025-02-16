@@ -42,25 +42,6 @@ public class ClientHandler implements Runnable, IObserver {
 
                 MessageStrategyFactory.getStrategy(command).execute(restMessage, this);
 
-//                if(message.startsWith("#JOIN")){
-//                    String name = message.split(" ")[1];
-//                    server.broadcast("A new person joined the chat. Welcome to " + name);
-//                    this.name = name;
-//                }
-//                else if(message.equals("#LEAVE")){
-//                    server.broadcast(name + " just left the chat server. Bye bye.....");
-//                    client.close();
-//                }
-//                else if(message.startsWith("#PRIVATE")){
-//                    String[] msgSplit  = message.split(" ", 3);
-//
-//                    String name = msgSplit[1];
-//                    String privateMessage = msgSplit[2];
-//
-//                    sendPrivateMessage(name, privateMessage);
-//                }
-
-//
             }
         } catch (IOException e) {
             e.printStackTrace();
