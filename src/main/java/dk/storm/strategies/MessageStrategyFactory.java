@@ -16,6 +16,10 @@ public class MessageStrategyFactory {
         stratagies.put("#MESSAGE", new MessageStrategy());
         stratagies.put("#PRIVATE", new PrivateStrategy());
         stratagies.put("#LEAVE", new LeaveStrategy());
+        stratagies.put("#GETLIST", new GetListStrategy());
+        stratagies.put("#HELP", new HelpStrategy());
+        stratagies.put("#STOPSERVER", new StopServerStrategy());
+        stratagies.put("#PRIVATESUBLIST", new PrivateSubListStrategy());
     }
 
 
@@ -27,4 +31,9 @@ public class MessageStrategyFactory {
             }
         });
     }
+
+    public static Map<String, IMessageStrategy> getStrategies(){
+        return stratagies;
+    }
+
 }

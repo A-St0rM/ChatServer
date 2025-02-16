@@ -36,12 +36,13 @@ public class ClientHandler implements Runnable, IObserver {
         try {
 
             while ((message = in.readLine()) != null) {
+                System.out.println(message);
+                String[] strs = message.split(" ");
+                String command = strs[0];
 
-                String command = message.split(" ")[0];
-                String restMessage = message.substring(command.length()+1);
 
+                String restMessage = strs.length > 1 ? message.substring(command.length()+1) : message;
                 MessageStrategyFactory.getStrategy(command).execute(restMessage, this);
-
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -93,7 +94,6 @@ public class ClientHandler implements Runnable, IObserver {
             e.printStackTrace();
         }
     }
-
 
     public ChatServer getServer(){
         return this.server;

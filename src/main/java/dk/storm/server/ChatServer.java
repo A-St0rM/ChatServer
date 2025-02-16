@@ -15,6 +15,8 @@ public class ChatServer implements IObservable {
 
     //Singleton design pattern
     private ChatServer(){};
+    private ServerSocket serverSocket;
+
 
     public static synchronized IObservable getInstance(){
         if(server == null){
@@ -30,15 +32,13 @@ public class ChatServer implements IObservable {
 
     public void startServer(int port) {
         try {
-            ServerSocket server = new ServerSocket(port);
+            serverSocket = new ServerSocket(port);
             //Thread pool
             ExecutorService executorService = Executors.newCachedThreadPool();
             while (true) {
-                Socket client = server.accept();
+                Socket client = serverSocket.accept();
                 ClientHandler clientHandler = new ClientHandler(client, this, clients);
-                //new Thread(clientHandler).start();
                 executorService.submit(clientHandler);
-
                 clients.add(clientHandler);
             }
         } catch (IOException e) {
@@ -63,7 +63,13 @@ public class ChatServer implements IObservable {
         }
     }
 
+
     public void removeClient(ClientHandler client){
         clients.remove(client);
     }
+
+    public void stopServer()  {
+        System.exit(0);
+    }
+
 }

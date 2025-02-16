@@ -24,9 +24,6 @@ public class PrivateStrategy implements IMessageStrategy {
     }
 
     private void sendPrivateMessage(String targetName, String privateMessage, ClientHandler sender) {
-        Random random = new Random();
-        int randomDelay = random.nextInt(5000); // Random delay mellem 0-5000ms
-
         List<ClientHandler> clients = sender.getServer().getClients(); // Henter alle klienter
 
         ClientHandler targetClient = null;
@@ -48,12 +45,7 @@ public class PrivateStrategy implements IMessageStrategy {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                try {
-                    Thread.sleep(randomDelay);
-                    finalTargetClient.notify("Private message from " + sender.getName() + ": " + privateMessage);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                finalTargetClient.notify("Private message from " + sender.getName() + ": " + privateMessage);
             }
         }).start();
     }
