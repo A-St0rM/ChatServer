@@ -54,35 +54,6 @@ public class ClientHandler implements Runnable, IObserver {
         out.println(message);
     }
 
-    public void sendPrivateMessage(String name, String privateMessage){
-        Random random = new Random();
-        int randomDelay = random.nextInt(5000); // Random delay between 0-5000ms
-
-        ClientHandler targetClient = null;
-        for (ClientHandler ch : clients) {
-            if (ch.name.equals(name)) {
-                targetClient = ch;
-                break;
-            }
-        }
-
-        if (targetClient == null) {
-            out.println("User " + name + " not found.");
-            return;
-        }
-
-        // Start a new thread to send the message after randomDelay
-        ClientHandler finalTargetClient = targetClient;
-        new Thread(() -> {
-            try {
-                Thread.sleep(randomDelay);
-                finalTargetClient.notify("Private message from " + name + ": " + privateMessage);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }).start();
-    }
-
     public void closeClient() {
         try {
 
